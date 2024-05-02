@@ -1,0 +1,67 @@
+이중우선순위큐
+
+class Solution {
+    boolean check;
+    int[] store = {};
+    
+    public int[] solution(String[] operations) {
+        int[] answer = {};
+        int plus = 0;
+        
+        for(int i = 0 ; i<operations.length ; i++){
+           if(operations[i].contains("I")){
+               store[plus] = Integer.parseInt(operations[i].substring(2));
+               plus++;
+           }else{
+               if(operations[i]=="D 1"){
+                  findMax();
+                  delete();
+               }
+                if(operations[i]=="D -1"){
+                   findMin();
+                   delete();
+                }
+           }
+        }
+        findMax();
+        answer = new int[2];
+        if(store.length==0){
+           return answer;
+        }
+        else {
+            answer[0] = store[0];
+            answer[1] = store[store.length-1];
+        }
+        return answer;
+    }
+    //최대값찾기
+    void findMax(){
+         for(int j=0 ; j<store.length ; j++){
+               for(int k=1 ; k<store.length ; k++)
+                   if(store[j]>store[k]){
+                       int top = store[j];
+                       store[j] = store[k];
+                       store[k] = top;
+                   }
+           }
+    }
+    //최솟값찾기
+    void findMin(){
+        for(int j=0 ; j<store.length ; j++){
+           for(int k=1 ; k<store.length ; k++)
+               if(store[j]<store[k]){
+                   int bottom = store[j];
+                   store[j] = store[k];
+                   store[k] = bottom;
+               }
+        }
+    }
+  //해당명령 값 삭제
+    void delete(){
+        int[] copy = new int[store.length-1];
+        for(int i = 0 ; i<copy.length ; i++){
+            copy[i] = store[i];
+        }
+        store = copy;
+    }
+}
