@@ -1,0 +1,27 @@
+//야근지수
+//우선순위 큐 이용하여 제일 큰값 남은시간 n만큼 -1
+import java.util.*;
+
+class Solution {
+    PriorityQueue<Integer> reverse_pq = new PriorityQueue<Integer>(Collections.reverseOrder());
+    
+    public long solution(int n, int[] works) {
+        long answer = 0;
+        
+         for(int i = 0 ; i < works.length ; i++){
+            reverse_pq.offer(works[i]);
+        }
+        
+        while(n > 0){
+            int dw = reverse_pq.poll();
+            if(dw == 0) break;
+            reverse_pq.offer(dw-1);
+            n-=1;
+        }
+       for(int work : reverse_pq) {
+            answer += work * work;
+        }
+        return answer;
+    }
+    
+}
