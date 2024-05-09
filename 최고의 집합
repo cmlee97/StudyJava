@@ -1,0 +1,22 @@
+//최고의 집합
+//n은 자연수 개수, s는 합
+class Solution {
+    public int[] solution(int n, int s) {
+        //자연수 개수가 합보다 작을 수 없다.
+        if(n > s){
+            return new int[]{-1};
+        }
+        int[] answer = new int[n];
+        for(int i = 0 ; i < n ; i++){
+            answer[i] = s / n;
+        }
+        
+        int idx = n - 1;
+        
+        for(int j = 0 ; j < s%n ; j++){
+            answer[idx]++;
+            idx--;
+        }
+        return answer;
+    }
+}
