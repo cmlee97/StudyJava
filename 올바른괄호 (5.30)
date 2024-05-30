@@ -1,0 +1,39 @@
+//스택/큐
+import java.util.*;
+class Solution {
+    int checkopen = 0;
+    int checkclose = 0;
+    String[] wordArray;
+    boolean answer = true;
+    boolean solution(String s) {
+        
+        wordArray = new String[s.length()];
+        
+        wordArray = s.split("");
+        if(wordArray[0].equals(")")) return false;
+        openCheck();
+        closeCheck();
+       
+        if(checkopen==checkclose){
+            if(checkopen+checkclose==wordArray.length) return true;
+            else if(wordArray[checkopen+checkclose].equals(" ")) return false;
+            else solution(s);
+        }
+        else return false;
+        
+        return answer;
+    }
+
+    void openCheck(){
+        for(int i = checkopen+checkclose ; i < wordArray.length; i++){
+                if(wordArray[i].equals("(")) checkopen++;
+                else break;
+        }
+    }
+    void closeCheck(){
+         for(int j = checkopen; j < wordArray.length; j++){
+                if(wordArray[j].equals(")"))checkclose++;
+                else break;
+            }
+    }
+}
