@@ -1,0 +1,29 @@
+//Arrays.sort와 reverseOrder()Integer만 가능
+import java.util.*;
+class Solution
+{
+    int []reverseB;
+    public int solution(int []A, int []B)
+    {
+        int answer = 0;
+        Arrays.sort(A);
+        reverseB = reversesort(B);
+        for(int i = 0 ; i < A.length; i++){
+            answer += A[i]*reverseB[i];
+        }
+        return answer;
+    }
+    int[] reversesort(int []reverseB){
+        for(int i = 0 ; i < reverseB.length; i++){
+            for(int j = i+1 ; j < reverseB.length ; j++){
+                if(reverseB[i]<reverseB[j]){
+                    int min = reverseB[i];
+                    reverseB[i] = reverseB[j];
+                    reverseB[j] = min;
+                }
+            }
+        }
+        return reverseB;
+    }
+    
+}
