@@ -1,0 +1,15 @@
+import java.util.*;
+class Solution {
+    public int solution(int n) {
+        String binary = Integer.toBinaryString(n);
+        int ncountOne = binary.length()-binary.replace(String.valueOf('1'),"").length();
+        int nextcountOne =0;
+        for(int i = 1 ; ;){
+            n+=i;
+            binary = Integer.toBinaryString(n);
+            nextcountOne = binary.length()-binary.replace(String.valueOf('1'),"").length();
+            if(ncountOne==nextcountOne) break;
+        }
+        return n;
+    }
+}
