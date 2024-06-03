@@ -1,0 +1,15 @@
+class Solution {
+    public int solution(int n) {
+        int [] F = new int[n+1];
+        
+        for(int i = 0 ; i <= n ; i++){
+            if(i==0) F[0] = 0;
+            else if(i==1) F[1] = 1;
+            else{
+                F[i]=(F[i-1]+F[i-2])%1234567;
+            }
+        }
+        return F[n];
+    }
+}
+//47번째 피보나치 수는 오버플로우발생
