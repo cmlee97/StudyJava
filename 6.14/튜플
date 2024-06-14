@@ -1,0 +1,26 @@
+import java.util.*;
+class Solution {
+    public int[] solution(String s) {
+        
+        s = s.substring(2, s.length()-2).replace("},{"," ");
+        String[] sArr = s.split(" ");
+        Arrays.sort(sArr, Comparator.comparingInt(String::length));
+        
+        List<Integer> list = new ArrayList<>();
+        
+        for(String str : sArr){
+            String[] check = str.split(",");
+            for(int i = 0 ; i < check.length ; i++){
+                int changeNum = Integer.parseInt(check[i]);
+                
+                if(!list.contains(changeNum)) list.add(changeNum);
+            }
+        }
+        int[] answer = new int[list.size()];
+        
+        for(int i = 0 ; i < list.size() ; i++){
+            answer[i] = list.get(i);
+        }
+        return answer;
+    }
+}
