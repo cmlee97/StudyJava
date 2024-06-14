@@ -1,0 +1,25 @@
+import java.util.*;
+class Solution {
+    public int[] solution(int[] progresses, int[] speeds) {
+        Queue<Integer> queue = new LinkedList<>();
+        List<Integer> answer = new ArrayList<>();
+        //queue에 개발에 소요되는 시간을 계산하여 add
+        for(int i = 0 ; i < progresses.length ; i++) {
+			queue.add((int)(Math.ceil((100.0-progresses[i])/speeds[i])));
+		}
+        while(!queue.isEmpty()){
+            //큐의 가장 위의 원소꺼내기
+            int day = queue.poll();
+            int count = 1;
+            //꺼낸 값이 다른 원소보다 작거나 같은 원소는 꺼내고 count+1
+            //queue가 빌때까지 반복
+            while(!queue.isEmpty() && day >= queue.peek()){
+                count++;
+                queue.poll();
+            }
+            //비교가 끝나면 count값 넣어주기
+            answer.add(count);
+        }
+        return answer.stream().mapToInt(i->i).toArray();
+    }
+}
