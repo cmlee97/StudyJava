@@ -1,0 +1,35 @@
+//자카드유사도 : 두집합을 통해 유사도를 측정하는 방식
+// 교집합의 크기 / 합집합의 크기
+import java.util.*;
+class Solution {
+    public int solution(String str1, String str2) {
+        double answer = 0;
+        
+        str1 = str1.toUpperCase();
+        str2 = str2.toUpperCase();
+        
+        List<String> str1List = new ArrayList<>();
+        List<String> str2List = new ArrayList<>();
+        List<String> intersection = new ArrayList<>();
+        
+        for(int i = 0 ; i < str1.length()-1; i++){
+            char c1 = str1.charAt(i);
+            char c2 = str1.charAt(i+1);
+            if(c1 >= 'A' && c1 <= 'Z' && c2 >= 'A' && c2 <= 'Z') str1List.add(c1+""+c2);
+        }
+        for(int i = 0 ; i < str2.length()-1; i++){
+            char c1 = str2.charAt(i);
+            char c2 = str2.charAt(i+1);
+            if(c1 >= 'A' && c1 <= 'Z' && c2 >= 'A' && c2 <= 'Z') str2List.add(c1+""+c2);
+        }
+        
+        for(String s : str1List){
+            if(str2List.remove(s))intersection.add(s);
+        }
+        
+        if((str1List.size()+str2List.size())==0) return 65536;
+        answer = (double)intersection.size()/(double)(str1List.size()+str2List.size());
+        
+        return (int)(answer*65536);
+    }
+}
