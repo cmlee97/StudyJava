@@ -1,0 +1,26 @@
+import java.util.*;
+class Solution {
+    public int solution(int n, int k) {
+        int answer = 0;
+        boolean count = false;
+        String changeNum = Integer.toString(n,k);
+        
+        if(n == 0) return 0;
+        
+        for(String num : changeNum.split("0")){
+            if(num.equals("")) continue;
+            long data = Long.parseLong(num);
+        
+            if(data == 1){
+                count = true;
+            }
+            for(int i = 2 ; i <= Math.sqrt(data) ; i++){
+                if(data%i == 0) count = true;
+            }
+            if(!count) answer++;
+            count = false;
+        }
+        
+        return answer;
+    }
+}
