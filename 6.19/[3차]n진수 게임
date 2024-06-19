@@ -1,0 +1,18 @@
+import java.util.*;
+class Solution {
+    public String solution(int n, int t, int m, int p) {
+        String answer = "";
+        String str = "";
+        int number = 0;
+        
+        while(str.length() < t*m){
+            str += Integer.toString(number++,n);
+        }
+        for(int i = p-1 ; i < t*m ; i+=m){
+            answer+= str.charAt(i);
+        }
+       
+        
+        return answer.toUpperCase();
+    }
+}
