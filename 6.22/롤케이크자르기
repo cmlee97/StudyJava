@@ -1,0 +1,23 @@
+import java.util.*;
+class Solution {
+    public int solution(int[] topping) {
+        int answer = 0;
+        Map<Integer, Integer> first = new HashMap<>();
+        Map<Integer, Integer> second = new HashMap<>();
+        
+        for(int i : topping){
+            second.put(i, second.getOrDefault(i, 0)+1);
+        }
+        
+        for(int i : topping){
+            first.put(i, first.getOrDefault(i, 0)+1);
+            
+            if(second.get(i) - 1 == 0) second.remove(i);
+            else second.put(i, second.get(i) - 1);
+            
+            if(first.size() == second.size())
+                answer++;
+        }
+        return answer;
+    }
+}
