@@ -1,0 +1,21 @@
+import java.util.*;
+class Solution {
+    public int solution(int x, int y, int n) {
+        int answer = 0;
+        
+        int[] cal = new int[y+1];
+        for(int i = 0 ; i <= y ; i++){
+            cal[i] = Integer.MAX_VALUE;
+        }
+        cal[x] = 0;
+        for(int i = x ; i <= y ; i++){
+            if(cal[i] == Integer.MAX_VALUE) continue;
+            if(i+n <= y) cal[i+n] = Math.min(cal[i+n], cal[i]+1);
+            if(i*2 <= y) cal[i*2] = Math.min(cal[i*2], cal[i]+1);
+            if(i*3 <= y) cal[i*3] = Math.min(cal[i*3], cal[i]+1);
+        }
+        if(cal[y] == Integer.MAX_VALUE) return -1;
+        return cal[y];
+    }
+    
+}
