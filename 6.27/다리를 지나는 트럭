@@ -1,0 +1,29 @@
+import java.util.*;
+class Solution {
+    public int solution(int bridge_length, int weight, int[] truck_weights) {
+        int answer = 1;
+        int now = 0;
+        int weights = 0;
+        Stack<Integer> stack = new Stack<>();
+        Queue<Integer> queue = new LinkedList<>();
+        
+        for(int i = 0 ; i < bridge_length ; i++){
+            queue.add(0);
+        }
+        
+        if(bridge_length ==1) return truck_weights.length + 1;
+        if(truck_weights.length == 1) return bridge_length + 1;
+        
+        while(now < truck_weights.length){
+            weights -= queue.poll();
+            answer++;
+            if(weights + truck_weights[now] <= weight){
+                queue.offer(truck_weights[now]);
+                weights += truck_weights[now++];
+            }else queue.offer(0);
+        }
+        
+        return answer + bridge_length - 1;
+    }
+}
+//https://velog.io/@cyj2825/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4-%EB%8B%A4%EB%A6%AC%EB%A5%BC-%EC%A7%80%EB%82%98%EB%8A%94-%ED%8A%B8%EB%9F%AD-Java%EC%9E%90%EB%B0%94
