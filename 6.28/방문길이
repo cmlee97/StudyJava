@@ -1,0 +1,38 @@
+import java.util.*;
+class Solution {
+    public int solution(String dirs) {
+        int answer = 0;
+        HashSet<String> visited = new HashSet<>();
+        
+        int x = 0;
+        int y = 0;
+        
+        for(int i = 0 ; i < dirs.length() ; i++){
+            int nextx = x;
+            int nexty = y;
+            String moving = "";
+            if(dirs.charAt(i) == 'U'){
+                nexty++;
+                moving += x + "" + y + "->" + nextx + nexty;
+            }else if(dirs.charAt(i) == 'D'){
+                nexty--;
+                moving += nextx + "" + nexty + "->" + x + y;
+            }else if(dirs.charAt(i) == 'R'){
+                nextx++;
+                moving += x + "" + y + "->" + nextx + nexty;
+            }else{
+                nextx--;
+                moving += nextx + "" + nexty + "->" + x + y;
+            }
+            if(nextx < -5 || nexty < -5 || nextx > 5 || nexty > 5){
+                continue;
+            }
+            visited.add(moving);
+            x = nextx;
+            y = nexty;
+        }
+        answer = visited.size();
+        return answer;
+    }
+}
+//https://hstory0208.tistory.com/entry/Java%EC%9E%90%EB%B0%94-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4-Lv2-%EB%B0%A9%EB%AC%B8-%EA%B8%B8%EC%9D%B4-HashSet
