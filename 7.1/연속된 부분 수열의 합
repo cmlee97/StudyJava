@@ -1,0 +1,26 @@
+class Solution {
+    public int[] solution(int[] sequence, int k) {
+        int sum = 0;
+        int left = 0;
+        int right = sequence.length;
+        for(int i = 0, j = 0 ; i < sequence.length ; i++){
+            //합보다 작을 때까지 더한다
+            while(j < sequence.length && sum < k){
+                sum += sequence[j++];
+            }
+            //합과 k가 같으면 길이를 구한다
+            if(sum==k){
+                int leng = j-i-1;
+                if(right - left > leng){
+                    left = i;
+                    right = j-1;
+                }
+            }
+            //같지않으면 맨처음 sequence값을 뺸다
+            sum -= sequence[i];
+        }
+        int[] answer = {left, right};
+        return answer;
+    }
+}
+//https://velog.io/@seowj0710/%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4-Level-2-%EC%97%B0%EC%86%8D%EB%90%9C-%EB%B6%80%EB%B6%84-%EC%88%98%EC%97%B4%EC%9D%98-%ED%95%A9-Java
