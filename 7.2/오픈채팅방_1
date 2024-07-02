@@ -1,0 +1,39 @@
+import java.util.*;
+
+class Solution {
+    public String[] solution(String[] record) {
+        int num = 0;
+        String id = "";
+        for(String str : record){
+            if(str.contains("Enter")||str.contains("Leave")) num++;
+        }
+        String[] answer = new String[num];
+        int index = 0;
+        for(int i = 0 ; i < record.length; i++){
+            String[] message = record[i].split(" ");
+            if(record[i].contains("Enter")){
+                answer[index] = message[2]+"님이 들어왔습니다.";
+                index++;
+            }else if(record[i].contains("Leave")){
+                answer[index] = message[2]+"님이 나갔습니다.";
+                index++;
+            }else if(record[i].contains("Change")){
+                
+                for(String str : answer){
+                    for(int j = i-1 ; j <= 0 ; j--){
+                        if(record[j].contains(message[1])) {
+                            String[] idStr = record[j].split(" ");
+                            id = idStr[2];
+                            break;
+                        }
+                    } 
+                    if(str.contains(id)){
+                        if(str.contains("Enter")) str = message[1]+"님이 들어왔습니다.";
+                        else if(str.contains("Leave")) str = message[1]+"님이 나갔습니다.";
+                    }
+                }
+            }
+        }
+        return answer;
+    }
+}
