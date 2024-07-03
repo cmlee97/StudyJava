@@ -1,0 +1,48 @@
+DFS(Dpth-first Search) : 깊이 우선 탐색
+  깊이 우선 탐색 : 연결된 노드를 따라서 계속 방문을 한 후에 더이상 연결된 노드들이 없을 때 그 전 노드로 되돌아가고 다시 연결된 노드를 따라서 탐색.
+    모든 노드를 방문하고 싶을 때 사용
+
+**DFS의 특징**
+
+- 자기 자신을 호출하는 순환알고리즘으로 구현 가능
+- 트리 탐색에서 배웠던 Pre-order, In-order, Post-order도 포함
+- 반드시 그래프를 탐색하면서 어떤 노드를 방문했었는지의 여부검사
+    - 무한 루프에 빠질 위험이 있음
+- 스택의 구조이기 때문에 LIFO의 원칙을 따른다
+
+### 재귀 구현
+boolean[] visited = new boolean[n];
+public static void main(String[] args){
+	dfs(1);
+}
+void dfs(int nodeIndex){
+	//방문처리
+	visited[nodeIndex] = true;
+	//방문한 노드에 인접한 노드 찾기
+	for(int node : graph[nodeIndex]){
+		//인접한 노드가 방문한 적이 없다면 DFS수행
+		if(!visited[node]){
+			dfs(node);
+		}
+	}
+}
+
+### Stack 구현
+boolean[] visited = new boolean[n];
+Stack<Integer> stack = new Stack<>();
+public static void main(String[] args){
+	//시작노드 삽입
+	stack.push(1);
+	//시작노드 방문처리
+	visited[1] = true;
+	//스택이 비어있지 않을때 까지
+	while(!stack.isEmpty()){
+		int nodeIndex = stack.pop();
+		for(int LinkedNode : graph[nodeIndex]{
+			if(!visited[LinkedNode]){
+				stack.push(LinkedNode);
+				visited[LinkedNode] = true;
+			}
+		}
+	}
+}
