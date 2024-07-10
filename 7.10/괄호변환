@@ -1,0 +1,63 @@
+import java.util.*;
+class Solution {
+    public String solution(String p) {
+        String answer = "";
+        if(check(p)) return p;
+        answer = split(p);
+        return answer;
+    }
+    //u를 변환하는 메소드
+    String reverse(String p){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 1 ; i < p.length()-1 ; i++){
+            if(p.charAt(i) == '(') sb.append(")");
+            else sb.append("(");
+        }
+        return sb.toString();
+    }
+    //올바른 괄호 체크
+    boolean check(String p){
+        int open = 0;
+        if(p.charAt(0)==')') return false;
+        for(int i = 0 ; i < p.length() ; i++){
+            if(p.charAt(i) == '(') open++;
+            else{
+                open--;
+                if(open < 0) return false;
+            }
+        }
+        return true;
+    }
+    //올바른 괄호 문자열 변환 메소드
+    String split(String p){
+        StringBuilder u = new StringBuilder();
+        StringBuilder v = new StringBuilder();
+        
+        if(p.length() == 0) return "";
+        
+        int open = 0;
+        for(int i = 0 ; i < p.length() ; i++){
+            if(p.charAt(i)=='(') open++;
+            else open--;
+            //open = 0인 경우 가장 작은 단위의 '균형잡힌 괄호 문자열'
+            if(open == 0){
+                u.append(p.substring(0, i+1));
+                v.append(p.substring(i+1, p.length()));
+                
+                if(check(u.toString())){
+                    u.append(split(v.toString()));
+                }else{
+                    StringBuilder str = new StringBuilder();
+                    str.append("(");
+                    str.append(split(v.toString()));
+                    str.append(")");
+                    str.append(reverse(u.toString()));
+                    return str.toString();
+                }
+                break;
+            }
+        }
+        return u.toString();
+    }
+}
+//https://fbtmdwhd33.tistory.com/250
