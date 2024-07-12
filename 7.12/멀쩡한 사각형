@@ -1,0 +1,11 @@
+class Solution {
+    public long solution(int w, int h) {
+        long answer = 1;
+        answer = (w*h)-((w+h)-gcd((long)w,(long)h));
+        return answer;
+    }
+    long gcd(long w, long h){
+        if(h==0) return w;
+        return gcd(h, w%h);
+    }
+}
