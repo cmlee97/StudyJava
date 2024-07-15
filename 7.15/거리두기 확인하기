@@ -1,0 +1,49 @@
+//bfs이용하여 탐색
+//모든 P에 대해서 거리두기를 만족하는지 확인
+//바로옆에 P가 오지 않거나 O가 있고 O와 인접한 자리에 P가 없는 경우
+import java.util.*;
+class Solution {
+    public int[] solution(String[][] places) {
+        int[] answer = new int[places.length];
+        
+        for(int i = 0 ; i < places.length ; i++){
+            String[] p = places[i];
+            boolean isOk = true;
+            for(int j = 0 ; j < 5 && isOk ; j++){
+                for(int k = 0 ; k < 5 && isOk ; k++){
+                    if(p[j].charAt(k) == 'P'){
+                        if(!bfs(j, k, p)) isOk = false;
+                    }
+                }
+            }
+            answer[i] = isOk ? 1 : 0;
+        }
+        return answer;
+    }
+    boolean bfs(int j, int k, String[] p){
+        int dr[] = {-1, 1, 0, 0};
+        int dc[] = {0, 0, -1, 1};
+        
+        Queue<int[]> queue = new LinkedList<int[]>();
+        queue.offer(new int[] {j, k});
+        while(!queue.isEmpty()){
+            int[] position = queue.poll();
+            for(int i = 0 ; i < 4 ; i++){
+                int nr = position[0] + dr[i];
+                int nc = position[1] + dc[i];
+                //원래출발점 P는 제외 (nr == j && nc == k)
+                if(nr < 0 || nc < 0 || nr >= 5 || nc >= 5 || (nr == j && nc == k))
+                    continue;
+                //맨해튼거리
+                int d = Math.abs(nr-j) + Math.abs(nc-k);
+                //거리두기를 지키려면 O,X만 가능
+                if(p[nr].charAt(nc)== 'P' && d <= 2) return false;
+                //다음 탐색을 하면 맨해튼거리가 1증가 d<2만 탐색
+                else if(p[nr].charAt(nc) == '0' && d < 2)
+                    queue.offer(new int[] {nr, nc});
+            }
+        }
+        return true;
+    }
+}
+//https://jisunshine.tistory.com/148
