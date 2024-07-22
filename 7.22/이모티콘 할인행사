@@ -1,0 +1,55 @@
+//2023 KAKAO BLIND RECRUITMENT
+//완전탐색 이용
+import java.util.*;
+class Solution {
+    int sign = 0;
+    int earn = 0;
+    public int[] solution(int[][] users, int[] emoticons) {
+        int[] answer = new int[2];
+        int[] arr = new int[emoticons.length];
+        comb(arr, 0, users, emoticons);
+        
+        answer[0] = sign;
+        answer[1] = earn;
+        return answer;
+    }
+    //완전탐색 분기
+    void comb(int[] arr, int start, int[][] users, int[] emoticons){
+        //회원과 수익을 계산하는 함수로 이동
+        if(start == arr.length){
+            calculate(arr, users, emoticons);
+            return;
+        }
+        //4번 할인율을 입력하고 다음단계로 넘기는 로직
+        for(int i = 10 ; i <= 40 ;i += 10){
+            arr[start] = i;
+            comb(arr, start+1, users, emoticons);
+        }
+    }
+    void calculate(int[] arr, int[][] users, int[] emoticons){
+        //해당 이모티콘 할인율을 적용했을 때 회원수
+        int count = 0;
+        //해당 이모티콘 할인율을 적용했을 떄 수익
+        int earn_t = 0;
+        for(int[] user : users){
+            int discount = user[0];
+            int price = user[1];
+            int sum = 0;
+            //discount할인기준과 price가겨을 구한뒤 할인기주이 맞다면 구입
+            for(int i = 0 ; i < arr.length ; i++){
+                if(arr[i] >= discount) sum += (emoticons[i]/100)*(100-arr[i]);
+            }
+            if(sum >= price) count++;
+            else earn_t += sum;
+        }
+        //할인율에 대해 가입한 회원과 수익을 지금까지 구한 최대 회원과 최대수익을 비교하는 함수
+        if(count > sign){
+            sign = count;
+            earn = earn_t;
+            return;
+        }else if(count == sign){
+            if(earn < earn_t) earn = earn_t;
+        }
+    }
+}
+//https://taehoung0102.tistory.com/262
