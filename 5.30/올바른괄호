@@ -1,3 +1,15 @@
+괄호가 바르게 짝지어졌다는 것은 '(' 문자로 열렸으면 반드시 짝지어서 ')' 문자로 닫혀야 한다는 뜻입니다. 
+예를 들어
+"()()" 또는 "(())()" 는 올바른 괄호입니다.
+")()(" 또는 "(()(" 는 올바르지 않은 괄호입니다.
+'(' 또는 ')' 로만 이루어진 문자열 s가 주어졌을 때, 문자열 s가 올바른 괄호이면 true를 return 하고, 
+올바르지 않은 괄호이면 false를 return 하는 solution 함수를 완성해 주세요.
+
+제한사항
+문자열 s의 길이 : 100,000 이하의 자연수
+문자열 s는 '(' 또는 ')' 로만 이루어져 있습니다.
+
+
 //스택/큐
 import java.util.*;
 class Solution {
@@ -6,31 +18,40 @@ class Solution {
     String[] wordArray;
     boolean answer = true;
     boolean solution(String s) {
-        
+        //1. 문자열크기만큼 배열 생성
         wordArray = new String[s.length()];
-        
+        //2. 생성된 배열에 문자열을 한글자씩 저장
         wordArray = s.split("");
+        //3. 문자열이 )로 시작된다면 열리기도 전에 닫혔으므로 false 반환
         if(wordArray[0].equals(")")) return false;
+        //4. 열린 괄호 check
         openCheck();
+        //6. 닫힌 괄호 check
         closeCheck();
-       
+        //8. 열린괄호와 닫힌 괄호의 개수가 같은경우
         if(checkopen==checkclose){
+            // 9. 열린괄호+닫힌괄호 = 주어진 문자열의 길이
             if(checkopen+checkclose==wordArray.length) return true;
+            //10. 열린괄호+닫힌괄호의 개수 다음 배열이 빈칸이면
             else if(wordArray[checkopen+checkclose].equals(" ")) return false;
+            //11. 둘다 아닐 경우 함수 재실행
             else solution(s);
         }
+        // 8. 열린괄호와 닫힌 괄호의 개수가 다른 경우 false 리턴
         else return false;
-        
         return answer;
     }
-
+    //열린괄호 check 함수
     void openCheck(){
+    // 5. 반복문의 초기값은 열린괄호와 닫힌 괄호의 갯수 그 이후의 열린괄호 개수 check
         for(int i = checkopen+checkclose ; i < wordArray.length; i++){
                 if(wordArray[i].equals("(")) checkopen++;
                 else break;
         }
     }
+    //닫힌괄호 check 함수
     void closeCheck(){
+    // 7. 반복문의 초기값은 열린괄호 개수 그 이후의 닫힌 괄호 개수 check
          for(int j = checkopen; j < wordArray.length; j++){
                 if(wordArray[j].equals(")"))checkclose++;
                 else break;
@@ -42,13 +63,17 @@ import java.util.*;
 class Solution {
     
     boolean solution(String s) {
+        // 1. stack 선언
         Stack<Character> stack = new Stack<Character>();
         
         try{
+            //2. 문자열의 길이 만큼 반복문 생성
             for(int i = 0 ; i < s.length(); i++){
+                //3. 문자열을 한글자씩 비교 -> (일 경우 push, )일 경우 pop
                 if(s.charAt(i) == '(') stack.push('(');
                 else stack.pop();
             }
+            //4. stack이 빈 경우 true 리턴
             return stack.empty();
         }catch(Exception e){} return false;
         
