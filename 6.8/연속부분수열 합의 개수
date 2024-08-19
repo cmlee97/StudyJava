@@ -1,29 +1,26 @@
 import java.util.*;
 
 class Solution {
-    public int[] solution(int n, String[] words) {
-        int[] answer = new int[2];
-        List<String> addList = new ArrayList<String>();
-        
-        for(int i = 0 ; i < words.length ; i++){
-            if(addList.contains(words[i])){
-                answer[0] = (i%n)+1;
-                answer[1] = (i/n)+1;
-                break;
+    public int solution(int[] elements) {
+        int answer = 0;
+        //set은 중복되는 값 제외
+        HashSet<Integer> hash = new HashSet<>();
+        int start = 1;
+        //1. 주어진 수열의 길이만큼 반복문을 돌린다
+        while(start <= elements.length){                              
+            for(int i = 0 ; i < elements.length; i++){
+                int sum = 0;
+                //2. 각 길이별로 나올수 있는 합
+                for(int j = i ; j < i+start ; j++){
+                    sum += elements[j % elements.length];
+                }
+                //3. 합을 set에 저장
+                hash.add(sum);
             }
-            addList.add(words[i]);
-            
-            if(i > 0&&words[i-1].charAt(words[i-1].length()-1)!=words[i].charAt(0)){
-                answer[0] = (i%n)+1;
-                answer[1] = (i/n)+1;
-                break;
-            }
-            if(i==words.length-1){
-                answer[0] = 0;
-                answer[1] = 0;
-            }
-        }        
-
+            start++;
+        }
+        //4. set의 크기가 나온 합의 경우의 수
+        answer = hash.size();
         return answer;
     }
 }
