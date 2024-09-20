@@ -1,26 +1,53 @@
+124 나라가 있습니다. 124 나라에서는 10진법이 아닌 다음과 같은 자신들만의 규칙으로 수를 표현합니다.
+
+124 나라에는 자연수만 존재합니다.
+124 나라에는 모든 수를 표현할 때 1, 2, 4만 사용합니다.
+예를 들어서 124 나라에서 사용하는 숫자는 다음과 같이 변환됩니다.
+
+10진법	124 나라	10진법	124 나라
+1	           1	    6	     14
+2	           2	    7	     21
+3	           4	    8	     22
+4	          11	    9	     24
+5	          12	    10	     41
+자연수 n이 매개변수로 주어질 때, n을 124 나라에서 사용하는 숫자로 바꾼 값을 return 하도록 solution 함수를 완성해 주세요.
+
+제한사항
+n은 50,000,000이하의 자연수 입니다.
+
+//if문을 통해 해결
 import java.util.*;
 import java.lang.Math;
 class Solution {
     public String solution(int n) {
         String answer = "";
+        //1. 이어붙일 문자 저장하는 stack
         Stack<String> change = new Stack<>();
+        //2. 맨 처음 값은 0으로 시작
         change.push("0");
+        //3. index 생성
         double check = 1;
-        for(int i = 0 ; i < n ; i++){            
+        //4. 주어진 숫자만큼 반복문 실행
+        for(int i = 0 ; i < n ; i++){ 
+            //5. 이전 저장된 값이 0이면 삭제후 1삽입
             if(change.peek() == "0"){
                 change.pop();
                 change.push("1");
             } 
+            //6. 이전 저장된 값이 1이면 삭제후 2삽입
             else if(change.peek() == "1"){
                 change.pop();
                 change.push("2");
+            //7. 이전 저장된 값이 2이면 삭제후 4삽입
             }else if(change.peek() == "2"){
                 change.pop();
                 change.push("4");
+            //8. 이전 저장된 값이 4이면 삭제후 1삽입
             }else if(change.peek() == "4"){
                 change.pop();
                 change.push("1");
             }
+            //9. 만약 i가 check의  3의 check제곱수와 같은 경우
             if(i == (int)Math.pow(3,check)) {
                 change.push("1");
                 check++;
@@ -35,18 +62,24 @@ class Solution {
 
     }
 }
-
+//1,2,4 3개를 이용한 진법 변환이기 때문에 나머지를 이용하여 풀이
 import java.util.*;
 class Solution {
     public String solution(int n) {
         String answer = "";
+        //1.바꿀 진법순서대로 배열에 저장
         String[] formation = {"4", "1", "2"};
+        //2. n이 0보다 클때까지
         while(n > 0){
+            //3. 현재 n을 3으로 나눈 나머지를 저장
             int remainder = n % 3;
+            //4. n을 3을 나눈값이 다음값이 된다
             n /= 3;
+            //5. 나머지가 0인 경우는 n에 -1을 한다
             if(remainder == 0){
                 n--;
             }
+            //6. answer에 나머지값을 index로한 배열의 값을 현재 answer의 문자열 '0'index자리에 넣어줌.
             answer = formation[remainder] + answer;
         }
         return answer;
