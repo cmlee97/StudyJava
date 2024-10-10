@@ -1,19 +1,38 @@
+자연수 x를 y로 변환하려고 합니다. 사용할 수 있는 연산은 다음과 같습니다.
+
+x에 n을 더합니다
+x에 2를 곱합니다.
+x에 3을 곱합니다.
+자연수 x, y, n이 매개변수로 주어질 때, x를 y로 변환하기 위해 필요한 최소 연산 횟수를 return하도록 solution 함수를 완성해주세요. 이때 x를 y로 만들 수 없다면 -1을 return 해주세요.
+
+제한사항
+1 ≤ x ≤ y ≤ 1,000,000
+1 ≤ n < y
+
+
+//방문처리 DP(동적계획법)을 사용하여 문제해결 가능 
 import java.util.*;
 class Solution {
     public int solution(int x, int y, int n) {
         int answer = 0;
-        
+        //1. 변환할 수의 크기만큼 배열생성
         int[] cal = new int[y+1];
         for(int i = 0 ; i <= y ; i++){
             cal[i] = Integer.MAX_VALUE;
         }
+        //2. 인덱스가 주어진 x값의 배열값을 0으로 설정
         cal[x] = 0;
+        //3. 변환하기 전의 수부터 변환할 까지 순회하면서 변환할 수 있는 수를 비교하기
         for(int i = x ; i <= y ; i++){
             if(cal[i] == Integer.MAX_VALUE) continue;
+            //4. x+n<=y인 경우 x+n값과 x+1중 작은값을 x+n에 할당
             if(i+n <= y) cal[i+n] = Math.min(cal[i+n], cal[i]+1);
+            //5. x*2<=y인 경우 x*2값과 x+1중 작은값을 x*2에 할당
             if(i*2 <= y) cal[i*2] = Math.min(cal[i*2], cal[i]+1);
+            //6. x*3<=y인 경우 x*3값과 x+1중 작은값을 x*3에 할당
             if(i*3 <= y) cal[i*3] = Math.min(cal[i*3], cal[i]+1);
         }
+        //7. 변환할 수 없는 값이면 -1을 return
         if(cal[y] == Integer.MAX_VALUE) return -1;
         return cal[y];
     }
