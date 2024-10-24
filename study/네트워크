@@ -1,8 +1,16 @@
 //깊이·너비 우선탐색(DFS·BFS)
 //네트워크
+네트워크란 컴퓨터 상호 간에 정보를 교환할 수 있도록 연결된 형태를 의미합니다. 예를 들어, 컴퓨터 A와 컴퓨터 B가 직접적으로 연결되어있고,
+컴퓨터 B와 컴퓨터 C가 직접적으로 연결되어 있을 때 컴퓨터 A와 컴퓨터 C도 간접적으로 연결되어 정보를 교환할 수 있습니다. 따라서 컴퓨터 A, B, C는 모두 같은 네트워크 상에 있다고 할 수 있습니다.
 
-//BFS 탐색
+컴퓨터의 개수 n, 연결에 대한 정보가 담긴 2차원 배열 computers가 매개변수로 주어질 때, 네트워크의 개수를 return 하도록 solution 함수를 작성하시오.
 
+제한사항
+컴퓨터의 개수 n은 1 이상 200 이하인 자연수입니다.
+각 컴퓨터는 0부터 n-1인 정수로 표현합니다.
+i번 컴퓨터와 j번 컴퓨터가 연결되어 있으면 computers[i][j]를 1로 표현합니다.
+computer[i][i]는 항상 1입니다.
+//BFS 탐색 -> Queue이용
 import java.util.*;
 
 class Solution {
@@ -10,24 +18,28 @@ class Solution {
     public int solution(int n, int[][] computers) {
         int answer = 0;
         boolean[] visited = new boolean[n];
-        
-        
+        //1. 컴퓨터의 개수만큼 반복문을 실행시키며 BFS함수 호출
         for(int i = 0 ; i < n ; i++){
             if(!visited[i]){
                 BFS(computers, visited, i);
+                //2. 네트워크 개수 증가
                 answer++;
             }
         }
         return answer;
     }
-    
+    //BFS함수
     void BFS(int[][] computers, boolean[] visited, int v){
         Queue<Integer> queue = new LinkedList<>();
+        //3. 방문한 컴퓨터는 visited = true 
         visited[v] = true;
+        //4. 방문한 컴퓨터의 값을 queue에 저장
         queue.add(v);
+        //5. queue가 존재할 경우까지 실행
         while(!queue.isEmpty()){
             Integer w = queue.poll();
             for(int i = 0 ; i < computers.length ; i++){
+                //6. 현재 노드와 연결된 컴퓨터이면서 방문하지 않은 경우
                 if(computers[w][i] == 1 && !visited[i]){
                     visited[i]=true;
                     queue.add(i);
@@ -37,8 +49,7 @@ class Solution {
     }
 }
 
-//DFS 탐색
-
+//DFS 탐색 -> 재귀함수 이용
 import java.util.*;
 
 class Solution {
@@ -46,20 +57,23 @@ class Solution {
     public int solution(int n, int[][] computers) {
         int answer = 0;
         boolean[] check = new boolean[n];
-        
+        //1. 방문하지 않은 컴퓨터인지 확인 후 DFS함수 호출
         for(int i = 0 ; i < n ; i++){
             if(!check[i]){
                 DFS(computers, i, check);
+                //2. 네트워크 개수 증가
                 answer++;
             }
         }
         return answer;
     }
-    
+    //DFS함수
     boolean[] DFS(int[][] computers, int i, boolean[] check){
         check[i] = true;
         for(int j = 0 ; j < computers.length ; j++){
+            //3. 현재노드와 연결된 컴퓨터 이면서 방문하지 않은 경우
             if(i != j && computers[i][j] == 1 && check[j] == false){
+                //4. 재귀함수로 DFS함수호출
                 check = DFS(computers, j , check);
             }
         }
