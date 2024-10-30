@@ -1,4 +1,17 @@
-이중우선순위큐
+이중 우선순위 큐는 다음 연산을 할 수 있는 자료구조를 말합니다.
+
+명령어	수신 탑(높이)
+I 숫자	큐에 주어진 숫자를 삽입합니다.
+D 1	    큐에서 최댓값을 삭제합니다.
+D -1	큐에서 최솟값을 삭제합니다.
+이중 우선순위 큐가 할 연산 operations가 매개변수로 주어질 때, 모든 연산을 처리한 후 큐가 비어있으면 [0,0] 비어있지 않으면 [최댓값, 최솟값]을 return 하도록 solution 함수를 구현해주세요.
+
+제한사항
+operations는 길이가 1 이상 1,000,000 이하인 문자열 배열입니다.
+operations의 원소는 큐가 수행할 연산을 나타냅니다.
+원소는 “명령어 데이터” 형식으로 주어집니다.- 최댓값/최솟값을 삭제하는 연산에서 최댓값/최솟값이 둘 이상인 경우, 하나만 삭제합니다.
+빈 큐에 데이터를 삭제하라는 연산이 주어질 경우, 해당 연산은 무시합니다.
+
 
 class Solution {
     boolean check;
@@ -7,24 +20,34 @@ class Solution {
     public int[] solution(String[] operations) {
         int[] answer = {};
         int plus = 0;
-        
+        //1. 주어진 연산의 길이만큼 반복문 실행
         for(int i = 0 ; i<operations.length ; i++){
+           //2. 연산이 I+숫자일 경우 
            if(operations[i].contains("I")){
+               //3. 숫자만 잘라서 store 배열에 저장
                store[plus] = Integer.parseInt(operations[i].substring(2));
                plus++;
            }else{
+               //4. D 1일 경우
                if(operations[i]=="D 1"){
+                  //5. 오름차순 정렬 함수 호출
                   findMax();
+                  //6. 최댓값 지우는 함수 호출
                   delete();
                }
+                //7. D -1일 경우
                 if(operations[i]=="D -1"){
+                   //8. 내림차순 정렬 함수 호출
                    findMin();
+                   //9. 최솟값 지우는 함수 호출
                    delete();
                 }
            }
         }
+        //10. 오름차순 정렬 함수 호출
         findMax();
         answer = new int[2];
+        //11. store 배열에 저장된 값이 없을경우
         if(store.length==0){
            return answer;
         }
@@ -34,8 +57,9 @@ class Solution {
         }
         return answer;
     }
-    //최대값찾기
+    //오름차순 정렬 함수
     void findMax(){
+        //12. 현재 저장된 store배열에서 정렬
          for(int j=0 ; j<store.length ; j++){
                for(int k=1 ; k<store.length ; k++)
                    if(store[j]>store[k]){
@@ -45,8 +69,9 @@ class Solution {
                    }
            }
     }
-    //최솟값찾기
+    //내림차순 정렬 함수
     void findMin(){
+        //13. 현재 저장된 store배열에서 정렬
         for(int j=0 ; j<store.length ; j++){
            for(int k=1 ; k<store.length ; k++)
                if(store[j]<store[k]){
@@ -75,23 +100,33 @@ class Solution {
     public int[] solution(String[] operations) {
         int[] answer = {0,0};
         //우선순위가 낮은 숫자가 먼저나옴
+        //1. 오름차순 정렬 Queue
         PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
         //우선순위가 높은 숫자가 먼저나옴
+        //2. 내림차순 정렬 Queue
         PriorityQueue<Integer> reverse_pq = new PriorityQueue<Integer>(Collections.reverseOrder());
-        
+        //3. 주어진 연산의 길이만큼 반복문 실행
         for(int i = 0 ; i < operations.length; i++){
+            //4. 띄어쓰기를 구분해서 명령어구분자와 숫자부분으로 배열 저장
             String temp[] = operations[i].split(" ");
+            //5. 명령어구분자를 switch case문으로 I, D구분
             switch(temp[0]){
+                //6. I인경우
                 case "I" :
+                    //7. 숫자만 오름차순Queue와 내림차순Queue에 저장
                     pq.add(Integer.parseInt(temp[1]));
                     reverse_pq.add(Integer.parseInt(temp[1]));
-                break;
+                    break;
+                //8. D인 경우
                 case "D" : 
+                    //9. D 1인경우
                     if(pq.size() > 0){
                         if(Integer.parseInt(temp[1]) == 1){
+                            //10. 내림차순정렬을 통해 최댓값 가져온후 두 큐 모두 삭제
                             int max = reverse_pq.poll();
                             pq.remove(max);
                         }else {
+                            //11. 오름차순정렬을 통해 최솟값 가져온후 두 큐 모두 삭제
                             int min = pq.poll();
                             reverse_pq.remove(min);
                         }
@@ -99,6 +134,7 @@ class Solution {
                     break;
             }
         }
+        //12. 두 Queue모두 2개 이상의 값을 가지고 있을 경우
         if(pq.size()>=2){
             answer[0] = reverse_pq.poll();
             answer[1] = pq.poll();
