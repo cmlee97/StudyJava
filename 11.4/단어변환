@@ -54,3 +54,53 @@ class Solution {
         }
     }
 }
+
+//BFS
+import java.util.*;
+class Solution {
+   
+    public int solution(String begin, String target, String[] words) {
+        int answer = 0;
+        //1. 변환 가능한 단어 저장할 Queue
+        Queue<String> queue = new LinkedList<>();
+        //2. 단어집합 Set
+        Set<String> set = new HashSet<>(Arrays.asList(words));
+        //3. 변환이 불가능한 경우
+        if(!set.contains(target)) return 0;
+        //4. queue에 begin 추가
+        queue.offer(begin);
+        //5. set에 begin 추가
+        set.remove(begin);
+        
+        while(!queue.isEmpty()){
+            for(int i = 0 ; i < queue.size() ; i++){
+                //6. queue에서 단어 하나 꺼내 cur에 저장
+                String cur = queue.poll();
+                //7. 현재단어가 target과 같은 경우
+                if(cur.equals(target)) return answer;
+                //8. toArray()를 사용해 HashSet타입을 배열로 변환한 뒤 반복문 사용
+                for(String word : set.toArray(new String[set.size()])){
+                    //9. 변환 가능한 경우
+                    if(transCheck(cur, word)){
+                        queue.offer(word);
+                        set.remove(word);
+                    }
+                }
+            }
+            //10. 변환횟수 증가
+            answer++;
+        }
+        return answer;
+    }
+    //변환가능여부 반환하는 함수
+    boolean transCheck(String word1, String word2){
+        int count = 0;
+        //11. word1과 word2에서 다른 문자의 수를 세기
+        for(int i = 0 ; i < word1.length() ; i++){
+            if(word1.charAt(i) != word2.charAt(i)) count++;
+        }
+        //12. 다른 문자의 수가 1일 경우에만 true 반환
+        return count == 1;
+    }
+  
+}
