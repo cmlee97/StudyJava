@@ -1,0 +1,72 @@
+n개의 노드가 있는 그래프가 있습니다. 각 노드는 1부터 n까지 번호가 적혀있습니다. 1번 노드에서 가장 멀리 떨어진 노드의 갯수를 구하려고 합니다.
+가장 멀리 떨어진 노드란 최단경로로 이동했을 때 간선의 개수가 가장 많은 노드들을 의미합니다.
+
+노드의 개수 n, 간선에 대한 정보가 담긴 2차원 배열 vertex가 매개변수로 주어질 때, 1번 노드로부터 가장 멀리 떨어진 노드가 몇 개인지를 return 하도록 solution 함수를 작성해주세요.
+
+제한사항
+노드의 개수 n은 2 이상 20,000 이하입니다.
+간선은 양방향이며 총 1개 이상 50,000개 이하의 간선이 있습니다.
+vertex 배열 각 행 [a, b]는 a번 노드와 b번 노드 사이에 간선이 있다는 의미입니다.
+
+import java.util.*;
+class Solution {
+    ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+    public int solution(int n, int[][] edge) {
+        int answer = 0;
+        //1. 그래프 초기화
+        for(int i = 0 ; i <= n ; i++) graph.add(new ArrayList<>());
+        //2. 그래프 간선 추가
+        for(int[] i : edge){
+            int v = i[0];
+            int w = i[1];
+            graph.get(v).add(w);
+            graph.get(w).add(v);
+        }
+        //3. 방문 여부를 저장하는 배열
+        boolean[] visit = new boolean[n+1];
+        //4. 최대 깊이 노드의 개수 구하는 BFS 함수 호출
+        answer = bfs(graph, n, visit);
+        return answer;
+    }
+    //BFS함수
+    int bfs(ArrayList<ArrayList<Integer>> graph, int n, boolean[] visit){
+        Queue<int[]> queue = new LinkedList<>();
+        int answer = 0;
+        //5. 시작노드(1번노드)를 Queue에 넣고 방문 처리
+        queue.add(new int[]{1, 0});
+        //6. 방문여부 = true
+        visit[1] = true;
+        //7. 최대깊이 저장
+        int maxDepth = 0;
+        //8. queue가 빌 때까지
+        while(!queue.isEmpty()){
+            int[] array = queue.poll();
+            //9. 현재 노드
+            int v = array[0];
+            //10. 현재 깊이
+            int depth = array[1];
+            //11. 최대 깊이와 현재 깊이가 같은 경우 answer증가
+            if(maxDepth == depth) answer++;
+            //12. 현재 노드가 최대 깊이보다 큰 경우
+            else if(maxDepth < depth){
+                //13. 현재깊이가 최대깊이
+                maxDepth = depth;
+                //14. 최대깊이에 있는 노드가 하나이기 때문에 answer = 1
+                answer = 1;
+            }
+            //15. 현재 노드의 인접노드들을 Queue에 넣고 방문 여부 처리
+            for(int i = 0 ; i < graph.get(v).size() ; i++){
+                //16. 현재노드v와 연결된 i번째 인접노드
+                int w = graph.get(v).get(i);
+                //17. 인접노드 w를 아직 방문하지 않은 경우
+                if(!visit[w]){
+                    //18. 인접노드w와 그 노드의 깊이를 Queue에 추가
+                    queue.add(new int[] {w, depth+1});
+                    //19. 방문여부 갱신
+                    visit[w] = true;
+                }
+            }
+        }
+        return answer;
+    }
+}
