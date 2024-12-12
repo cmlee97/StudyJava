@@ -1,0 +1,173 @@
+밤늦게 귀가할 때 안전을 위해 항상 택시를 이용하던 무지는 최근 야근이 잦아져 택시를 더 많이 이용하게 되어 택시비를 아낄 수 있는 방법을 고민하고 있습니다.
+"무지"는 자신이 택시를 이용할 때 동료인 어피치 역시 자신과 비슷한 방향으로 가는 택시를 종종 이용하는 것을 알게 되었습니다.
+"무지"는 "어피치"와 귀가 방향이 비슷하여 택시 합승을 적절히 이용하면 택시요금을 얼마나 아낄 수 있을 지 계산해 보고 "어피치"에게 합승을 제안해 보려고 합니다.
+위 예시 그림은 택시가 이동 가능한 반경에 있는 6개 지점 사이의 이동 가능한 택시노선과 예상요금을 보여주고 있습니다.
+그림에서 A와 B 두 사람은 출발지점인 4번 지점에서 출발해서 택시를 타고 귀가하려고 합니다. A의 집은 6번 지점에 있으며 B의 집은 2번 지점에 있고 두 사람이 모두 귀가하는 데 소요되는 예상 최저 택시요금이 얼마인 지 계산하려고 합니다.
+
+그림의 원은 지점을 나타내며 원 안의 숫자는 지점 번호를 나타냅니다.
+지점이 n개일 때, 지점 번호는 1부터 n까지 사용됩니다.
+지점 간에 택시가 이동할 수 있는 경로를 간선이라 하며, 간선에 표시된 숫자는 두 지점 사이의 예상 택시요금을 나타냅니다.
+간선은 편의 상 직선으로 표시되어 있습니다.
+위 그림 예시에서, 4번 지점에서 1번 지점으로(4→1) 가거나, 1번 지점에서 4번 지점으로(1→4) 갈 때 예상 택시요금은 10원으로 동일하며 이동 방향에 따라 달라지지 않습니다.
+예상되는 최저 택시요금은 다음과 같이 계산됩니다.
+4→1→5 : A, B가 합승하여 택시를 이용합니다. 예상 택시요금은 10 + 24 = 34원 입니다.
+5→6 : A가 혼자 택시를 이용합니다. 예상 택시요금은 2원 입니다.
+5→3→2 : B가 혼자 택시를 이용합니다. 예상 택시요금은 24 + 22 = 46원 입니다.
+A, B 모두 귀가 완료까지 예상되는 최저 택시요금은 34 + 2 + 46 = 82원 입니다.
+
+[문제]
+지점의 개수 n, 출발지점을 나타내는 s, A의 도착지점을 나타내는 a, B의 도착지점을 나타내는 b, 지점 사이의 예상 택시요금을 나타내는 fares가 매개변수로 주어집니다.
+이때, A, B 두 사람이 s에서 출발해서 각각의 도착 지점까지 택시를 타고 간다고 가정할 때, 최저 예상 택시요금을 계산해서 return 하도록 solution 함수를 완성해 주세요.
+만약, 아예 합승을 하지 않고 각자 이동하는 경우의 예상 택시요금이 더 낮다면, 합승을 하지 않아도 됩니다.
+
+[제한사항]
+지점갯수 n은 3 이상 200 이하인 자연수입니다.
+지점 s, a, b는 1 이상 n 이하인 자연수이며, 각기 서로 다른 값입니다.
+즉, 출발지점, A의 도착지점, B의 도착지점은 서로 겹치지 않습니다.
+fares는 2차원 정수 배열입니다.
+fares 배열의 크기는 2 이상 n x (n-1) / 2 이하입니다.
+예를들어, n = 6이라면 fares 배열의 크기는 2 이상 15 이하입니다. (6 x 5 / 2 = 15)
+fares 배열의 각 행은 [c, d, f] 형태입니다.
+c지점과 d지점 사이의 예상 택시요금이 f원이라는 뜻입니다.
+지점 c, d는 1 이상 n 이하인 자연수이며, 각기 서로 다른 값입니다.
+요금 f는 1 이상 100,000 이하인 자연수입니다.
+fares 배열에 두 지점 간 예상 택시요금은 1개만 주어집니다. 즉, [c, d, f]가 있다면 [d, c, f]는 주어지지 않습니다.
+출발지점 s에서 도착지점 a와 b로 가는 경로가 존재하는 경우만 입력으로 주어집니다.
+//플로이드-워셜
+import java.util.*;
+class Solution {
+    //1. 최대 비용을 나타내는 상수
+    int MAX = 20000001;
+    public int solution(int n, int s, int a, int b, int[][] fares) {
+        int answer = 0;
+        //2. 각 노드 사이의 최단 거리를 저장하는 배열
+        int[][] dp = new int[n+1][n+1];
+        //3. 배열 초기화
+        for(int i = 0 ; i <= n ; i++){
+            //4. 모든 거리를 최대 비용으로 초기화
+            Arrays.fill(dp[i], MAX);
+            //5. 자기 자신까지의 거리는 0
+            dp[i][i] = 0;
+        }
+        //6. 주어진 요금 정보를 dp배열에 저장
+        for(int i = 0 ; i < fares.length ; i++){
+            //7. 출발지점
+            int start = fares[i][0];
+            //8. 도착지점
+            int end = fares[i][1];
+            //9. 비용
+            int cost = fares[i][2];
+            //10. 출발 지점에서 도착 지점까지의 비용 저장
+            dp[start][end] = cost;
+            //11. 양방향으로 비용 저장
+            dp[end][start] = cost;
+        }
+        //12. 플로이드-워셜 알고리즘을 이용, 모든 노드 쌍 사이의 최단 거리 계산
+        for(int i = 1 ; i < n+1 ; i++){
+            for(int j = 1 ; j < n+1 ; j++){
+                for(int k = 1 ; k < n+1 ; k++){
+                    //13. 중간 노드 k를 거쳐가는 경우와 직접 가는 경우 중 최솟값 선택
+                    dp[j][k] = Math.min(dp[j][k], dp[j][i]+dp[i][k]);
+                }
+            }
+        }
+        //14. 출발지에서 A, B로 가는 최소 비용 계산
+        answer = dp[s][a] + dp[s][b];
+        //15. 모든 노드를 경유지로 고려하여 최소 비용 업데이트
+        for(int i = 1 ; i <= n ; i++){
+            answer = Math.min(answer, dp[s][i]+dp[i][a]+dp[i][b]);
+        }
+        return answer;
+    }
+}
+//다익스트라 알고리즘
+import java.util.*;
+//1. 각 간선 정보를 담는 클래스
+class Edge implements Comparable<Edge>{
+    //2. 연결된 노드의 index
+    int index;
+    //3. 간선의 비용
+    int cost;
+    Edge(int index, int cost){
+        this.index = index;
+        this.cost = cost;
+    }
+    //4. 비용을 기준으로 오름차순 정렬
+    @Override
+    public int compareTo(Edge e){
+        return this.cost - e.cost;
+    }
+}
+
+class Solution {
+    //5. 최대 비용
+    int MAX = 20000001;
+    //6. 그래프를 인접 리스트로 표현
+    ArrayList<ArrayList<Edge>> graph;
+    
+    public int solution(int n, int s, int a, int b, int[][] fares) {
+        //7. 최솟값으로 초기화
+        int answer = Integer.MAX_VALUE;
+        //8. 그래프 초기화
+        graph = new ArrayList<>();
+        for(int i = 0 ; i <= n ; i ++){
+            graph.add(new ArrayList<>());
+        }
+        //9. 주어진 요금 정보를 그래프에 저장(양방향)
+        for(int[] i : fares){
+            graph.get(i[0]).add(new Edge(i[1], i[2]));
+            graph.get(i[1]).add(new Edge(i[0], i[2]));
+        }
+        //10. 각 시작점에서 다른 모든 노드까지의 최단거리를 저장할 배열
+        int[] startA = new int[n + 1];
+        int[] startB = new int[n + 1];
+        int[] start = new int[n + 1];
+        //11. 최대 비용으로 초기화
+        Arrays.fill(startA, MAX);
+        Arrays.fill(startB, MAX);
+        Arrays.fill(start, MAX);
+        //12. 다익스트라 알고리즘을 이용, 각 시작점에서 다른 모든 노드까지의 최단 거리 계산
+        startA = dijkstra(a, startA);
+        startB = dijkstra(b, startB);
+        start = dijkstra(s, start);
+        //13. 모든 노드를 경유지로 하여 최솟값 구하기
+        for(int i = 1; i <= n ; i ++) answer = Math.min(answer, startA[i] + startB[i] + start[i]);
+        return answer;
+    }
+    //다익스트라 알고리즘
+    int[] dijkstra (int start, int[] costs) {
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        pq.offer(new Edge(start, 0));
+        costs[start] = 0;
+
+        while (!pq.isEmpty()) {
+            Edge now = pq.poll();
+            //14. 현재노드
+            int nIndex = now.index;
+            //15. 현재노드까지의 비용
+            int nCost = now.cost;
+            //16. 이미 더 짧은 경로가 있는 경우 건너뛰기
+            if(nCost > costs[nIndex]) continue;
+            //17. 현재 노드와 열결된 모든 간선을 확인
+            ArrayList<Edge> edges = graph.get(nIndex);
+            for (Edge edge : edges) {
+                //18. 다음 노드까지의 비용
+                int cost = costs[nIndex] + edge.cost;
+                //19. 더 짧은 경로를 발견할 경우
+                if (cost < costs[edge.index]) {
+                    //20. 비용을 갱신
+                    costs[edge.index] = cost;
+                    //21. 우선순위 큐에 추가
+                    pq.offer(new Edge(edge.index, cost));
+                }
+            }
+        }
+        return costs;
+    }
+}
+
+다익스트라 알고리즘: 우선순위 큐를 이용하여 가장 비용이 적은 노드를 선택하고, 연결된 노드들을 탐색하며 최단 경로를 찾는 알고리즘
+인접 리스트: 그래프를 표현하는 효율적인 방법 중 하나로, 각 노드에 연결된 간선들을 리스트로 저장
+시간 복잡도 개선: 플로이드-워셜 알고리즘보다 다익스트라 알고리즘이 더 효율적이므로 시간 복잡도를 줄임
+메모리 효율성: 필요에 따라 불필요한 변수를 제거하거나, 더 효율적인 자료 구조를 사용하여 메모리 사용량을 줄일 수 있음
+코드 가독성: 더 명확하고 간결한 코드 스타일을 적용하여 가독성을 높일 수 있음
