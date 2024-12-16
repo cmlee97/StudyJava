@@ -1,0 +1,58 @@
+0과 1로 이루어진 어떤 문자열 x에 대해서, 당신은 다음과 같은 행동을 통해 x를 최대한 사전 순으로 앞에 오도록 만들고자 합니다.
+
+x에 있는 "110"을 뽑아서, 임의의 위치에 다시 삽입합니다.
+예를 들어, x = "11100" 일 때, 여기서 중앙에 있는 "110"을 뽑으면 x = "10" 이 됩니다. 뽑았던 "110"을 x의 맨 앞에 다시 삽입하면 x = "11010" 이 됩니다.
+
+변형시킬 문자열 x가 여러 개 들어있는 문자열 배열 s가 주어졌을 때, 각 문자열에 대해서 위의 행동으로 변형해서 만들 수 있는 문자열 중 사전 순으로 가장 앞에 오는 문자열을 배열에 담아 return 하도록 solution 함수를 완성해주세요.
+
+제한사항
+1 ≤ s의 길이 ≤ 1,000,000
+1 ≤ s의 각 원소 길이 ≤ 1,000,000
+1 ≤ s의 모든 원소의 길이의 합 ≤ 1,000,000
+
+class Solution {
+    public String[] solution(String[] s) {
+        String[] answer = new String[s.length];
+        //1. 주어진 문자열 배열 s를 반복문을 통해 trans 함수를 호출하여 변환된 문자열을 answer 배열에 저장
+        for(int i = 0 ; i < s.length ; i++){
+            String str = trans(s[i]);
+            answer[i] = str;
+        }
+        return answer;
+    }
+    String trans(String s){
+        //2. 변환된 문자열을 저장할 StringBuilder
+        StringBuilder sb1 = new StringBuilder();
+        //3. '110'패턴을 임시로 저장할 StringBuilder
+        StringBuilder sb2 = new StringBuilder();
+        //4. 입력된 문자열 s의 각 문자를 처리
+        for(int i = 0 ; i < s.length() ; i ++){
+            Character c = s.charAt(i);
+            //5. 현재 문자가 '0'이며, 이전의 두문자가 '11'인 경우
+            if(sb1.length() >= 2 && c == '0' && sb1.charAt(sb1.length()-2) == '1' && sb1.charAt(sb1.length()-1) =='1'){
+                //6. sb2에 '110'패턴을 append
+                sb2.append("110");
+                //7. sb1에서 '11'을 delete
+                sb1.delete(sb1.length()-2, sb1.length());
+                //8. 패턴이 아닌경우, 
+            }else{
+                //9. 현재문자를 sb1에 append
+                sb1.append(c);
+            }
+        }
+        //10. sb2에 '110'패턴이 저장되어 있는 경우
+        if(sb2.length() > 0){
+            //11. sb1에 insert
+            if(sb1.indexOf("0") == -1){
+                sb1.insert(0, sb2);
+            //12. sb1에 '0'이 있는 경우
+            }else{
+                //13. 마지막 '0'뒤에 sb1를 insert
+                int index = sb1.lastIndexOf("0");
+                sb1.insert(index+1, sb2);
+            }
+        }
+        //14. 변환한 문자열 return
+        return sb1.toString();
+    }
+}
