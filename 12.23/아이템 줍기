@@ -1,0 +1,89 @@
+다음과 같은 다각형 모양 지형에서 캐릭터가 아이템을 줍기 위해 이동하려 합니다.
+지형은 각 변이 x축, y축과 평행한 직사각형이 겹쳐진 형태로 표현하며, 캐릭터는 이 다각형의 둘레(굵은 선)를 따라서 이동합니다.
+
+만약 직사각형을 겹친 후 다음과 같이 중앙에 빈 공간이 생기는 경우, 다각형의 가장 바깥쪽 테두리가 캐릭터의 이동 경로가 됩니다.
+단, 서로 다른 두 직사각형의 x축 좌표 또는 y축 좌표가 같은 경우는 없습니다.
+즉, 위 그림처럼 서로 다른 두 직사각형이 꼭짓점에서 만나거나, 변이 겹치는 경우 등은 없습니다.
+
+다음 그림과 같이 지형이 2개 이상으로 분리된 경우도 없습니다.
+한 직사각형이 다른 직사각형 안에 완전히 포함되는 경우 또한 없습니다.
+지형을 나타내는 직사각형이 담긴 2차원 배열 rectangle, 초기 캐릭터의 위치 characterX, characterY, 아이템의 위치 itemX, itemY가 solution 함수의 매개변수로 주어질 때,
+캐릭터가 아이템을 줍기 위해 이동해야 하는 가장 짧은 거리를 return 하도록 solution 함수를 완성해주세요.
+
+제한사항
+rectangle의 세로(행) 길이는 1 이상 4 이하입니다.
+rectangle의 원소는 각 직사각형의 [좌측 하단 x, 좌측 하단 y, 우측 상단 x, 우측 상단 y] 좌표 형태입니다.
+직사각형을 나타내는 모든 좌표값은 1 이상 50 이하인 자연수입니다.
+서로 다른 두 직사각형의 x축 좌표, 혹은 y축 좌표가 같은 경우는 없습니다.
+문제에 주어진 조건에 맞는 직사각형만 입력으로 주어집니다.
+charcterX, charcterY는 1 이상 50 이하인 자연수입니다.
+지형을 나타내는 다각형 테두리 위의 한 점이 주어집니다.
+itemX, itemY는 1 이상 50 이하인 자연수입니다.
+지형을 나타내는 다각형 테두리 위의 한 점이 주어집니다.
+캐릭터와 아이템의 처음 위치가 같은 경우는 없습니다.
+
+//DFS
+import java.util.*;
+class Solution {
+    //1. 맵을 나타내는 변수선언
+    String[][] shape;
+    //2. 시작점, 도착점, 최단거리, 현재까지 이동거리 선언
+    int startX, startY, targetX, targetY, answer, total;
+    public int solution(int[][] rectangle, int characterX, int characterY, int itemX, int itemY) {
+        //3. 맵 초기화
+        shape = new String[52][52];
+        startX = characterX;
+        startY = characterY;
+        targetX = itemX;
+        targetY = itemY;
+        answer = total = 0;
+        //4. 맵에 장애물 정보 저장
+        for(int i = 0 ; i < 52 ; i++){
+            //5. 모든 칸 초기화
+            Arrays.fill(shape[i], "");
+        }
+        for(int[] xy : rectangle){
+            int leftX = xy[0];
+            int leftY = xy[1];
+            int rightX = xy[2];
+            int rightY = xy[3];
+            //6. 각 꼭짓점에 방향 정보 저장
+            shape[leftX][leftY] = "LDX";
+            shape[rightX][leftY] = "RDX";
+            shape[leftX][rightY] = "LUX";
+            shape[rightX][rightY] = "RUX";
+            //7. 각 변에 방향정보 저장
+            for(int i = leftX+1 ; i < rightX ; i++){
+                shape[i][rightY] += "U";
+                shape[i][leftY] += "D";
+            }
+            for(int i = leftY+1 ; i < rightY ; i++){
+                shape[leftX][i] += "L";
+                shape[rightX][i] += "R";
+            }
+        }
+        //8. 깊이 우선 탐색 함수 호출
+        follow(characterX, characterY);
+        //9. 최단 거리 계산하기(왕복거리의 1/2)
+        answer = Math.min(answer, total-answer);
+        return answer;
+    }
+    // 깊이 우선 탐색 함수(DFS)
+    void follow(int x, int y){
+        //10. 현재 위치 방향 정보 저장
+        String location = shape[x][y];
+        //11. 방향에 따른 다음 위치 계산하기
+        if(location.equals("RU") || location.equals("UR") || location.equals("LUX") || location.equals("U")) x++;
+        if(location.equals("LD") || location.equals("DL") || location.equals("RDX") || location.equals("D")) x--;
+        if(location.equals("LU") || location.equals("UL") || location.equals("LDX") || location.equals("L")) y++;
+        if(location.equals("RD") || location.equals("DR") || location.equals("RUX") || location.equals("R")) y--;
+        //12. 이동 거리 증가
+        total++;
+        //13. 도착점에 도착한 경우, 현재까지 이동한 거리 return
+        if(x == targetX && y == targetY) answer = total;
+        //14. 시작점으로 되돌아간 경우, 탐색 종료
+        if(x == startX && y == startY) return;
+        //15. 깊이우선탐색 함수 재귀 호출을 통해 다음 위치로 이동
+        follow(x,y);
+    }
+}
