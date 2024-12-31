@@ -1,0 +1,66 @@
+영우는 천하제일 암산대회를 앞두고 있습니다. 암산보다는 암기에 일가견이 있는 영우는 구구단을 확장하여 억억단을 만들고 외워버리기로 하였습니다.
+
+억억단은 1억 x 1억 크기의 행렬입니다. 억억단을 외우던 영우는 친구 수연에게 퀴즈를 내달라고 부탁하였습니다.
+수연은 평범하게 문제를 내봐야 영우가 너무 쉽게 맞히기 때문에 좀 어렵게 퀴즈를 내보려고 합니다. 적당한 수 e를 먼저 정하여 알려주고 e 이하의 임의의 수 s를 여러 개 얘기합니다.
+영우는 각 s에 대해서 s보다 크거나 같고 e 보다 작거나 같은 수 중에서 억억단에서 가장 많이 등장한 수를 답해야 합니다. 만약 가장 많이 등장한 수가 여러 개라면 그 중 가장 작은 수를 답해야 합니다.
+수연은 영우가 정답을 말하는지 확인하기 위해 당신에게 프로그램 제작을 의뢰하였습니다. e와 s의 목록 starts가 매개변수로 주어질 때 각 퀴즈의 답 목록을 return 하도록 solution 함수를 완성해주세요.
+
+제한사항
+1 ≤ e ≤ 5,000,000
+1 ≤ starts의 길이 ≤ min {e,100,000}
+1 ≤ starts의 원소 ≤ e
+starts에는 중복되는 원소가 존재하지 않습니다.
+
+import java.util.*;
+class Solution {
+    Point[] dp;
+    public int[] solution(int e, int[] starts) {
+        int[] answer = {};
+        dp = new Point[e+1];
+        //1. 초기화 : 각 숫자에 대해서 자신으로만 나누어 떨어지는 횟수는 1
+        for(int i = 0 ; i <= e; i++){
+            dp[i] = new Point(i, 0);
+        }
+        //2. 각 숫자에 대해서 약수의 개수를 계산
+        for(int i = 1 ; i <= e ; i++){
+            for(int j = i ; j <= e ; j += i){
+                //3. j가 i의 배수일 경우, j의 약수 개수 증가
+                dp[j].c++;
+            }
+        }
+        //4. 약수 개수가 많은 순서대로, 약수 개수가 같으면 내림차순 정렬
+        Arrays.sort(dp, new Comparator<Point>(){
+            //5. 두개의 객체를 비교하여 정렬 순서 정하는 메서드
+            @Override
+            public int compare(Point p1, Point p2){
+                if(p1.c < p2.c) return 1;
+                else if(p1.c > p2.c) return -1;
+                else {
+                    if(p1.num > p2.num) return 1;
+                    else if(p1.num < p2.num) return -1;
+                    else return 0;
+                }
+            }
+        });
+        answer = new int[starts.length];
+        //6. 각 숫자에 대해서 해당 숫자보다 크거나 같은 숫자 중 약수 개수가 가장 많은 숫자를 찾기
+        for(int i = 0 ; i < starts.length ; i++){
+            for(int j = 0 ; j <= e ; j++){
+                if(starts[i] <= dp[j].num){
+                    answer[i] = dp[j].num;
+                    break;
+                }
+            }
+        }
+        return answer;
+    }
+    //각 숫자에 대한 정보를 담는 데이터구조 역할
+    class Point{
+        // num : Point 객체가 나타내는 숫자, c : 해당 숫자의 약수 개수
+        int num, c;
+        Point(int num, int c){
+            this.num = num;
+            this.c = c;
+        }
+    }
+}
