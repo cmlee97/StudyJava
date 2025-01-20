@@ -1,0 +1,80 @@
+n개의 송전탑이 전선을 통해 하나의 트리 형태로 연결되어 있습니다. 당신은 이 전선들 중 하나를 끊어서 현재의 전력망 네트워크를 2개로 분할하려고 합니다. 이때, 두 전력망이 갖게 되는 송전탑의 개수를 최대한 비슷하게 맞추고자 합니다.
+
+송전탑의 개수 n, 그리고 전선 정보 wires가 매개변수로 주어집니다. 전선들 중 하나를 끊어서 송전탑 개수가 가능한 비슷하도록 두 전력망으로 나누었을 때, 두 전력망이 가지고 있는 송전탑 개수의 차이(절대값)를 return 하도록 solution 함수를 완성해주세요.
+
+제한사항
+n은 2 이상 100 이하인 자연수입니다.
+wires는 길이가 n-1인 정수형 2차원 배열입니다.
+wires의 각 원소는 [v1, v2] 2개의 자연수로 이루어져 있으며, 이는 전력망의 v1번 송전탑과 v2번 송전탑이 전선으로 연결되어 있다는 것을 의미합니다.
+1 ≤ v1 < v2 ≤ n 입니다.
+전력망 네트워크가 하나의 트리 형태가 아닌 경우는 입력으로 주어지지 않습니다.
+
+//BFS
+import java.util.*;
+class Solution {
+    // 정답을 저장할 변수, 초기값은 최대값으로 설정
+    int answer = 2147483647;
+    // 방문 여부를 체크하기 위한 배열
+    boolean[] visited;
+    // 인접 리스트를 저장할 리스트
+    List<List<Integer>> list;
+    
+    public int solution(int n, int[][] wires) {
+        for(int i = 0 ; i < wires.length ; i++){
+            // 모든 전선을 하나씩 제거하며 BFS 수행
+            bfs(i, n , wires);
+        }
+        return answer;
+    }
+    //BFS함수
+    void bfs(int index, int n, int[][] wires){
+        // 인접 리스트 초기화
+        list = new ArrayList<>();
+        for(int i = 0 ; i < n ; i++){
+            // 각 노드에 연결된 노드들을 저장할 리스트 초기화
+            list.add(new ArrayList<>());
+        }
+        for(int i = 0 ; i < wires.length ; i++){
+            // 제거할 전선은 연결하지 않음
+            if(i == index) continue;
+            int A = wires[i][0];
+            int B = wires[i][1];
+            // 양방향 그래프이므로 두 노드를 서로 연결
+            list.get(A-1).add(B-1);
+            list.get(B-1).add(A-1);
+        }
+        Queue<Integer> queue = new ArrayDeque<>();
+        // 시작 노드 삽입
+        queue.offer(0);
+        // 방문 여부 초기화
+        visited = new boolean[n];
+        // 시작 노드 방문 처리
+        visited[0] = true;
+        
+        while(!queue.isEmpty()){
+            // 큐에서 현재 노드 꺼내기
+            int current = queue.poll();
+            // 현재 노드와 연결된 모든 노드 탐색
+            for(int o : list.get(current)){
+                // 방문하지 않은 노드인 경우
+                if(!visited[o]){
+                    // 방문 처리 후
+                    visited[o] = true;
+                    // 큐에 삽입
+                    queue.offer(o);
+                }
+            }
+        }
+        // 그룹 A의 노드 개수
+        int a = 0;
+        // 그룹 B의 노드 개수
+        int b = 0;
+        for(int i = 0 ; i < n ; i++){
+            // 방문 여부에 따라 그룹 분류
+            if(visited[i]) a++;
+            else b++;
+        }
+        // 두 그룹의 노드 개수 차이의 절댓값 계산 및 최솟값 갱신
+        answer = Math.min(answer, Math.abs(a-b));
+    }
+}
