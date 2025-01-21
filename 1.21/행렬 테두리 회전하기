@@ -1,0 +1,137 @@
+rows x columns 크기인 행렬이 있습니다. 행렬에는 1부터 rows x columns까지의 숫자가 한 줄씩 순서대로 적혀있습니다.
+이 행렬에서 직사각형 모양의 범위를 여러 번 선택해, 테두리 부분에 있는 숫자들을 시계방향으로 회전시키려 합니다. 각 회전은 (x1, y1, x2, y2)인 정수 4개로 표현하며, 그 의미는 다음과 같습니다.
+
+x1 행 y1 열부터 x2 행 y2 열까지의 영역에 해당하는 직사각형에서 테두리에 있는 숫자들을 한 칸씩 시계방향으로 회전합니다.
+다음은 6 x 6 크기 행렬의 예시입니다.
+
+이 행렬에 (2, 2, 5, 4) 회전을 적용하면, 아래 그림과 같이 2행 2열부터 5행 4열까지 영역의 테두리가 시계방향으로 회전합니다.
+이때, 중앙의 15와 21이 있는 영역은 회전하지 않는 것을 주의하세요.
+
+행렬의 세로 길이(행 개수) rows, 가로 길이(열 개수) columns, 그리고 회전들의 목록 queries가 주어질 때, 각 회전들을 배열에 적용한 뒤, 그 회전에 의해 위치가 바뀐 숫자들 중 가장 작은 숫자들을 순서대로 배열에 담아 return 하도록 solution 함수를 완성해주세요.
+
+제한사항
+rows는 2 이상 100 이하인 자연수입니다.
+columns는 2 이상 100 이하인 자연수입니다.
+처음에 행렬에는 가로 방향으로 숫자가 1부터 하나씩 증가하면서 적혀있습니다.
+즉, 아무 회전도 하지 않았을 때, i 행 j 열에 있는 숫자는 ((i-1) x columns + j)입니다.
+queries의 행의 개수(회전의 개수)는 1 이상 10,000 이하입니다.
+queries의 각 행은 4개의 정수 [x1, y1, x2, y2]입니다.
+x1 행 y1 열부터 x2 행 y2 열까지 영역의 테두리를 시계방향으로 회전한다는 뜻입니다.
+1 ≤ x1 < x2 ≤ rows, 1 ≤ y1 < y2 ≤ columns입니다.
+모든 회전은 순서대로 이루어집니다.
+예를 들어, 두 번째 회전에 대한 답은 첫 번째 회전을 실행한 다음, 그 상태에서 두 번째 회전을 실행했을 때 이동한 숫자 중 최솟값을 구하면 됩니다.
+
+//첫번째 풀이
+import java.util.*;
+class Solution {
+    int[] answer = {};
+    public int[] solution(int rows, int columns, int[][] queries) {
+        // rows x columns 크기의 2차원 배열 생성 후 1부터 순차적으로 값 채우기
+        int[][] square = new int[rows][columns];
+        int x = 1;
+        // 각 쿼리에 대해 회전 수행 및 최솟값 저장
+        for(int i = 0 ; i < rows ; i++){
+            for(int j = 0 ; j < columns ; j++){
+                square[i][j] = x;
+                x++;
+            }   
+        }
+        answer = rotate(square, queries);
+        return answer;
+    }
+    int[] rotate(int[][] square, int[][] queries){
+        
+        int[] answer = new int[queries.length];
+        int index = 0;
+        for(int[] query : queries){
+            // 쿼리 정보 추출 (0-based index)
+            int x1 = query[0]-1;
+            int x2 = query[2]-1;
+            int y1 = query[1]-1;
+            int y2 = query[3]-1;
+            // 초기값 저장 및 최솟값 초기화
+            int first = square[x1][y2];
+            int min = first;
+            // 숫자 이동 (오른쪽 -> 상)
+            // 왼쪽 열 (y1 열)을 따라 위에서 아래로 이동하며, 각 칸의 값을 오른쪽 칸으로 이동
+            // 이동하는 과정에서 현재 칸의 값과 다음 칸의 값 중 더 작은 값을 min에 저장하여 최솟값을 계산
+            for(int i = y2-1 ; i >= y1 ; i--){
+                min = Math.min(min, square[x1][i]);
+                square[x1][i+1] = square[x1][i];
+            }
+            // 숫자 이동 (위쪽 -> 좌)
+            for(int i = x1+1 ; i <= x2 ; i++){
+                min = Math.min(min, square[i][y1]);
+                square[i-1][y1] = square[i][y1];
+            }
+            // 숫자 이동 (왼쪽 -> 하)
+            for(int i = y1+1 ; i <= y2 ; i++){
+                min = Math.min(min, square[x2][i]);
+                square[x2][i-1] = square[x2][i];
+            }
+            // 숫자 이동 (아래쪽 -> 우)
+            for(int i = x2-1 ; i >= x1 ; i--){
+                min = Math.min(min, square[i][y2]);
+                square[i+1][y2] = square[i][y2];
+            }
+            // 초기값 복원
+            square[x1+1][y2] = first;
+            //최솟값 저장
+            answer[index] = min;
+            index++;
+        }
+        return answer;
+    }
+}
+//2번째 풀이
+//https://dev-note-97.tistory.com/265
+import java.util.*;
+class Solution {
+    int[][] matrix;
+    public int[] solution(int rows, int columns, int[][] queries) {
+        this.matrix = new int[rows][columns];  // 행렬 생성
+        int[] answer = new int[queries.length]; // 정답 배열
+        
+        for(int i = 0; i < rows; i++){  // 행렬 초기화
+            for(int j = 0; j < columns; j++){
+                matrix[i][j] = i*columns + j + 1;
+            }
+        }
+        
+        for(int i = 0; i < queries.length; i++){ // 회전하고 최솟값 answer에 저장
+            answer[i] = rotate(queries[i]);
+        }
+        
+        return answer;
+    }
+    
+    public int rotate(int[] query){
+        int r1 = query[0]-1; 
+        int c1 = query[1]-1;
+        int r2 = query[2]-1;
+        int c2 = query[3]-1;
+        
+        int temp = this.matrix[r1][c1]; // 시작위치 값 임시저장
+        int min = temp;                 // min값 초기화
+        for(int i = r1; i < r2; i++){ // 회전의 1번
+            this.matrix[i][c1] = this.matrix[i+1][c1];
+            if(min > this.matrix[i][c1]) min = this.matrix[i][c1];
+        }
+        for(int i = c1; i < c2; i++){ // 회전의 2번
+            this.matrix[r2][i] = this.matrix[r2][i+1];
+            if(min > this.matrix[r2][i]) min = this.matrix[r2][i];
+        }
+        for(int i = r2; i > r1; i--){ // 회전의 3번
+            this.matrix[i][c2] = this.matrix[i-1][c2];
+            if(min > this.matrix[i][c2]) min = this.matrix[i][c2];
+        }
+        for(int i = c2; i > c1; i--){ // 회전의 4번
+            this.matrix[r1][i] = this.matrix[r1][i-1];
+            if(min > this.matrix[r1][i]) min = this.matrix[r1][i];
+        }
+        this.matrix[r1][c1+1] = temp; // 임시저장한 값 저장
+        
+        return min; // 최솟값 반환
+    }
+    
+}
