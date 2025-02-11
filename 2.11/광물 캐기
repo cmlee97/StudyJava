@@ -1,0 +1,188 @@
+마인은 곡괭이로 광산에서 광석을 캐려고 합니다. 마인은 다이아몬드 곡괭이, 철 곡괭이, 돌 곡괭이를 각각 0개에서 5개까지 가지고 있으며, 곡괭이로 광물을 캘 때는 피로도가 소모됩니다. 각 곡괭이로 광물을 캘 때의 피로도는 아래 표와 같습니다.
+예를 들어, 철 곡괭이는 다이아몬드를 캘 때 피로도 5가 소모되며, 철과 돌을 캘때는 피로도가 1씩 소모됩니다. 각 곡괭이는 종류에 상관없이 광물 5개를 캔 후에는 더 이상 사용할 수 없습니다.
+마인은 다음과 같은 규칙을 지키면서 최소한의 피로도로 광물을 캐려고 합니다.
+
+사용할 수 있는 곡괭이중 아무거나 하나를 선택해 광물을 캡니다.
+한 번 사용하기 시작한 곡괭이는 사용할 수 없을 때까지 사용합니다.
+광물은 주어진 순서대로만 캘 수 있습니다.
+광산에 있는 모든 광물을 캐거나, 더 사용할 곡괭이가 없을 때까지 광물을 캡니다.
+즉, 곡괭이를 하나 선택해서 광물 5개를 연속으로 캐고, 다음 곡괭이를 선택해서 광물 5개를 연속으로 캐는 과정을 반복하며, 더 사용할 곡괭이가 없거나 광산에 있는 모든 광물을 캘 때까지 과정을 반복하면 됩니다.
+
+마인이 갖고 있는 곡괭이의 개수를 나타내는 정수 배열 picks와 광물들의 순서를 나타내는 문자열 배열 minerals가 매개변수로 주어질 때, 마인이 작업을 끝내기까지 필요한 최소한의 피로도를 return 하는 solution 함수를 완성해주세요.
+
+제한사항
+picks는 [dia, iron, stone]과 같은 구조로 이루어져 있습니다.
+0 ≤ dia, iron, stone ≤ 5
+dia는 다이아몬드 곡괭이의 수를 의미합니다.
+iron은 철 곡괭이의 수를 의미합니다.
+stone은 돌 곡괭이의 수를 의미합니다.
+곡괭이는 최소 1개 이상 가지고 있습니다.
+5 ≤ minerals의 길이 ≤ 50
+minerals는 다음 3개의 문자열로 이루어져 있으며 각각의 의미는 다음과 같습니다.
+diamond : 다이아몬드
+iron : 철
+stone : 돌
+//배열사용
+import java.util.*;
+class Solution {
+    public int solution(int[] picks, String[] minerals) {
+        int answer = 0;
+        // 다이아몬드 곡괭이 개수
+        int diamond = picks[0];
+        // 철 곡괭이 개수
+        int iron = picks[1];
+        // 돌 곡괭이 개수
+        int stone = picks[2];
+        // 총 곡괭이 개수
+        int pick = diamond + iron + stone;
+        // 총 광물 개수
+        int total = minerals.length;
+        // 각 곡괭이로 캘 수 있는 광물의 피해량 저장 배열
+        int[][] mineral = new int[pick][6];
+        // 최대 pick*5개의 광물만 캐도록 제한하고, 각 곡괭이로 캘 5개 광물의 피해량 합을 계산
+        for(int i = 0 ; i < Math.min(pick*5, total) ; i += 5){
+            // 5개 광물의 피해량 합
+            int sum = 0;
+            // 광물 종류별 피해량
+            int damage = 0;
+            for(int j = i ; j < Math.min(i+5, total) ; j++){
+                switch(minerals[j]){
+                    case "diamond" :
+                        damage = 25;
+                        break;
+                    case "iron" :
+                        damage = 5;
+                        break;
+                    case "stone" :
+                        damage = 1;
+                        break;
+                }
+                // 피해량 합 계산
+                sum += damage;
+                // 각 광물의 피해량 저장 (mineral[곡괭이인덱스][광물인덱스+1])
+                mineral[i/5][j%5+1] = damage;
+            }
+            // 해당 곡괭이로 캘 5개 광물의 총 피해량 (mineral[곡괭이인덱스][0])
+            mineral[i/5][0] = sum;
+        }
+        // 총 피해량을 기준으로 내림차순 정렬
+        Arrays.sort(mineral, new Comparator<int[]>(){
+            public int compare(int[] o1, int[] o2){
+                return o2[0] - o1[0];
+            }
+        });
+        // 각 곡괭이를 사용하여 광물을 캐고, 총 피해량 계산
+        for(int i = 0 ; i < pick ; i++){
+            // 현재 곡괭이로 캘 광물 정보
+            int[] temp = mineral[i];
+            // 사용할 곡괭이 종류
+            String type = "";
+            // 다이아몬드 곡괭이 사용
+            if(diamond > 0){
+                diamond -= 1;
+                type = "diamond";
+            // 철 곡괭이 사용
+            }else if(iron > 0){
+                iron -= 1;
+                type = "iron";
+            // 돌 곡괭이 사용
+            }else if(stone > 0){
+                stone -= 1;
+                type = "stone";
+            }
+            // 각 광물에 대한 피해량 계산 및 누적
+            for(int j = 1 ; j < 6; j++){
+                switch(type){
+                    // 다이아몬드 곡괭이: 25로 나눈 후 올림
+                    case "diamond" :
+                        answer += (int) Math.ceil(temp[j]/25.0);
+                        break;
+                    // 철 곡괭이: 5로 나눈 후 올림
+                    case "iron" :
+                        answer += (int) Math.ceil(temp[j]/5.0);
+                        break;
+                    // 돌 곡괭이: 피해량 그대로 더함
+                    case "stone" :
+                        answer += temp[j];
+                        break;
+                }
+            }
+        }
+        return answer;
+    }
+}
+
+//다른풀이
+//mineral클래스 생성 및 List, Collection사용
+import java.util.*;
+
+class Solution {
+    
+    static class Mineral {
+        private int diamond;
+        private int iron;
+        private int stone;
+        
+        public Mineral(int diamond, int iron, int stone) {
+            this.diamond = diamond;
+            this.iron = iron;
+            this.stone = stone;
+        }
+    }
+    
+    static int[][] scoreBoard;
+    static List<Mineral> list;
+    
+    public int solution(int[] picks, String[] minerals) {
+        int answer = 0;
+        
+        scoreBoard = new int[][]{{1, 1, 1}, {5, 1, 1}, {25, 5, 1}};
+        
+        int totalPicks = Arrays.stream(picks).sum();
+        list = new ArrayList<>();
+        for(int i = 0; i < minerals.length; i+=5) {
+            if(totalPicks == 0) break;
+            
+            int dia = 0, iron = 0, stone = 0;
+            for(int j = i; j < i + 5; j++) {
+                if(j == minerals.length) break;
+                
+                String mineral = minerals[j];
+                int val = mineral.equals("iron") ? 1 : 
+                    mineral.equals("stone") ? 2 : 0;
+                
+                dia += scoreBoard[0][val];
+                iron += scoreBoard[1][val];
+                stone += scoreBoard[2][val];
+            }
+            
+            list.add(new Mineral(dia, iron, stone));
+            totalPicks--;
+        }
+        
+        Collections.sort(list, ((o1, o2) -> (o2.stone - o1.stone)));
+        for(Mineral m : list) {
+            int dia = m.diamond;
+            int iron = m.iron;
+            int stone = m.stone;
+            
+            if(picks[0] > 0) {
+                answer += dia;
+                picks[0]--;
+                continue;
+            }
+            if(picks[1] > 0) {
+                answer += iron;
+                picks[1]--;
+                continue;
+            }
+            if(picks[2] > 0) {
+                answer += stone;
+                picks[2]--;
+                continue;
+            }
+        }
+        
+        return answer;
+    }
+}
