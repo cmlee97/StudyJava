@@ -1,0 +1,53 @@
+가로, 세로 길이가 n인 정사각형으로된 체스판이 있습니다. 체스판 위의 n개의 퀸이 서로를 공격할 수 없도록 배치하고 싶습니다.
+예를 들어서 n이 4인경우 다음과 같이 퀸을 배치하면 n개의 퀸은 서로를 한번에 공격 할 수 없습니다.
+체스판의 가로 세로의 세로의 길이 n이 매개변수로 주어질 때, n개의 퀸이 조건에 만족 하도록 배치할 수 있는 방법의 수를 return하는 solution함수를 완성해주세요.
+
+제한사항
+퀸(Queen)은 가로, 세로, 대각선으로 이동할 수 있습니다.
+n은 12이하의 자연수 입니다.
+// 백트래킹 문제
+import java.util.*;
+class Solution {
+    // 체스판을 나타내는 배열. board[i]는 i번째 행에 퀸이 위치한 열 번호를 저장
+    int[] board;
+    int answer;
+    public int solution(int n) {
+        // n x n 체스판 생성
+        board = new int[n];
+        // 백트래킹 시작 (0번째 행부터)
+        backTracking(n, 0);
+        
+        return answer;
+    }
+    void backTracking(int n, int depth){
+        // 모든 행에 퀸이 배치된 경우
+        if(depth == n){
+            // 정답 카운트 증가
+            answer++;
+            // 백트래킹 종료
+            return;
+        }
+        // 현재 행의 모든 열에 퀸을 놓는 경우
+        for(int i = 0 ; i < n ; i++){
+            // 현재 행(depth)에 퀸을 i번째 열에 배치
+            board[depth] = i;
+            // 현재 퀸 배치가 유효한지 확인
+            if(valid(depth)){
+                // 다음 행으로 이동하여 퀸 배치 시도
+                backTracking(n, depth + 1);
+            }
+            // valid()가 false를 반환하는 경우, 해당 열에 퀸을 놓는 것은 유효하지 않으므로, 다음 열을 시도
+        }
+    }
+    boolean valid(int depth){
+        // 이전 행들의 퀸들과 충돌하는지 확인
+        for(int i = 0 ; i < depth ; i++){
+            // 같은 열에 퀸이 있으면 false 반환
+            if(board[depth] == board[i]) return false;
+            // 대각선 방향에 퀸이 있으면 false 반환
+            if(Math.abs(depth - i) == Math.abs(board[depth] - board[i])) return false;
+        }
+        // 모든 조건을 만족하면 true 반환
+        return true;
+    }
+}
